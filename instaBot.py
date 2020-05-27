@@ -33,30 +33,41 @@ class InstagramBot():
         print('waiting for profile page to open')
         sleep(5)
         print('profile page opened')
-        self.driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a').click()
-        print('opening following list')
-        followings = self._get_names()
+       # self.driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a').click()
+        #print('opening following list')
+        #followings = self._get_names()
         self.driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[2]/a').click()
         print('opening followers list')
         followers = self._get_names()
-        not_following_back = [user for user in followings if user not in followers]
-        not_following_back.reverse()
-        for name in not_following_back:
+        count=0
+        for name in followers:
             print('searching for profile of', name)
-            self.driver.find_element_by_xpath('//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/div/div/span[2]').click()
-            self.driver.find_element_by_xpath('//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input').send_keys(name)
+            try:
+                self.driver.find_element_by_xpath('//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/div/div/span[2]').click()
+                self.driver.find_element_by_xpath('//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input').send_keys(name)
+                sleep(2)
+                self.driver.find_element_by_xpath('//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/div[2]/div[2]/div/a[1]').click()
+            except Exception:
+                self.driver.find_element_by_xpath('//*[@id="react-root"]/section/div/div[1]/div/div[2]/div/div/span[2]').click()
+                self.driver.find_element_by_xpath('//*[@id="react-root"]/section/div/div[1]/div/div[2]/input').send_keys(name)
+                sleep(2)
+                self.driver.find_element_by_xpath('//*[@id="react-root"]/section/div/div[1]/div/div[2]/div[2]/div[2]/div/a[1]').click()
             sleep(5)
-            self.driver.find_element_by_xpath('//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/div[2]/div[2]/div/a[1]').click()
             print('profile found of', name)
             sleep(5)
-            self.driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/header/section/div[1]/div[2]/span/span[1]/button').click()
-            value=input('want to unfollow: ')
-            if value.upper()=='YES':
-                self.driver.find_element_by_xpath('/html/body/div[4]/div/div/div[3]/button[1]').click()
-                print('unfollowed', name)
-            else:
-                self.driver.find_element_by_xpath('/html/body/div[4]/div/div/div[3]/button[2]').click()
-                print('unfollow cancelled for', name)
+            print('sending msg')
+            try:
+                self.driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/header/section/div[1]/div[1]/div/button').click()
+                sleep(3)
+                self.driver.find_element_by_xpath('//*[@id="react-root"]/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[2]/textarea').send_keys('Part of msg blast using a bot, dont mind it')
+                sleep(1)
+                self.driver.find_element_by_xpath('//*[@id="react-root"]/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/button').click()
+                count+=1
+                print('successfully sent msg')
+                print(count)
+            except Exception:
+                print('msg not send to', name)
+                continue
 
     
     def _get_names(self):
